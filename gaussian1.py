@@ -23,10 +23,12 @@ class Gaussian(nn.Module):
         det = torch.linalg.det(sigma)
         self.N = det * sqrt(2*pi)**dim   
         self.const = const
-        self.inv_sigma = inv(sigma)
+        self.inv_sigma = None#inv(sigma)
         self.dim = dim
     def forward(self,x):
-        return self.const / self.N * torch.exp(- 0.5 * (x-self.mu).T @ self.inv_sigma @ (x-self.mu))
+        if self.inv_sigma is None:
+            self.inv_sigma = inv(sigma)
+        return self.const / self.N * torch.exp(- 0.5 * (x-self.mu) @ self.inv_sigma @ (x-self.mu))
 
 def prod(g1,g2):
     '''
@@ -56,12 +58,12 @@ class BilateralLaplaceGaussian(nn.Module):
         self.g_input = g_input
         self.dim = g_input.dim
     def forward(self,j):
-        return self.g_input.const * torch.exp(0.5 * j.T @ self.g_input.sigma @ j + j @ self.g_input.mu)
+        return self.g_input.const * torch.exp(0.5 * j @ self.g_input.sigma @ j + j @ self.g_input.mu)
 
 
 def gaussian_moment(indxs,gaus_in):
     '''
-    method to compute the multivariate moment of a 
+    method to compute the moment of a 
     Gaussian.
     Input:
     indxs: list of integers for the moment one is
