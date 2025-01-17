@@ -71,10 +71,10 @@ def gaussian_moment(indxs,gaus_in):
     gaus = BilateralLaplaceGaussian(gaus_in)
     j0 = torch.zeros(gaus.dim,requires_grad=True).float()
     gaus0 = gaus(j0)
-    grad_out = grad(gaus0,j0,create_graph=True)[0]
-    for i in range(len(indxs)-1):
-        grad_out = grad(grad_out[indxs[i]],j0,create_graph=True)[0]
-    return grad_out[indxs[-1]]
+    grad_out = gaus0 #grad(gaus0,j0,create_graph=True)[0]
+    for i in range(len(indxs)):
+        grad_out = grad(grad_out,j0,create_graph=True)[0][indxs[i]]
+    return grad_out
 
 
 
