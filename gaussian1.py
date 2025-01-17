@@ -56,7 +56,7 @@ class BilateralLaplaceGaussian(nn.Module):
         self.g_input = g_input
         self.dim = g_input.dim
     def forward(self,j):
-        return self.g_input.const * torch.exp(-0.5 * j.T @ self.g_input.sigma @ j + j @ self.g_input.mu)
+        return self.g_input.const * torch.exp(0.5 * j.T @ self.g_input.sigma @ j + j @ self.g_input.mu)
 
 
 def gaussian_moment(indxs,gaus_in):
